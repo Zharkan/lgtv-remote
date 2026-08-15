@@ -3,11 +3,35 @@
 Desktop remote control for LG webOS TVs. Connects over your local network
 using the SSAP WebSocket protocol, with Wake-on-LAN for power-on.
 
+![Main interface](screenshots/home.png)
+
+## Features
+
+- HDMI input switching with device labels and connection status
+- App launcher with PIN unlock for locked apps
+- Volume control and mute
+- D-pad, numpad and media playback controls
+- Live screenshot of the TV screen (requires SSH access)
+- Auto-refresh screenshots at a configurable interval per TV
+- Wake-on-LAN power on/off
+- Keyboard shortcuts for navigation
+- Auto-discovery of TVs on the local network via SSDP
+
+## Screenshots
+
+| Edit TV | PIN unlock |
+|---------|------------|
+| ![Edit TV dialog](screenshots/settings.png) | ![PIN dialog](screenshots/pin-asking.png) |
+
+The Edit TV dialog lets you configure SSH access for live screenshots.
+When enabled, you can set an auto-refresh interval (5s, 10s, 30s, or 1 minute)
+to keep the screenshot up to date.
+
 ## Prerequisites
 
 **On the TV**: enable **Mobile TV On** so Wake-on-LAN works.
 
-- Settings → General → Devices → TV Management → Mobile TV On
+- Settings > General > Devices > TV Management > Mobile TV On
 - The exact path varies by firmware version.
 
 ## Install
@@ -41,8 +65,8 @@ lgtv-remote --mock
 ```
 
 On first launch a setup wizard discovers TVs on your network via SSDP.
-When you select a TV, it connects and the TV displays a pairing prompt —
-accept it with the physical remote. The pairing key is saved for future
+When you select a TV, it connects and the TV displays a pairing prompt.
+Accept it with the physical remote. The pairing key is saved for future
 sessions.
 
 ### Keyboard shortcuts
@@ -59,8 +83,8 @@ sessions.
 
 ### Pairing prompt not appearing
 
-- Make sure no other app (e.g. Home Assistant) is actively connected —
-  some firmware versions only allow one SSAP client.
+- Make sure no other app (e.g. Home Assistant) is actively connected.
+  Some firmware versions only allow one SSAP client.
 - Power-cycle the TV completely (unplug for 10 seconds).
 - Try connecting from the verification script first:
   ```bash
@@ -81,7 +105,7 @@ sessions.
 - SSDP uses multicast UDP on 239.255.255.250:1900. If your network
   segments VLANs or has IGMP snooping without a querier, multicast
   won't cross segments.
-- Use manual entry instead: Settings → Add TV → Enter manually.
+- Use manual entry instead: Settings > Add TV > Enter manually.
 - You need the TV's IP address (check your router's DHCP leases)
   and optionally the MAC address (printed on a label on the back).
 
