@@ -1,5 +1,5 @@
 pkgname=lgtv-remote
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="Desktop remote control for LG webOS TVs"
 arch=('any')
