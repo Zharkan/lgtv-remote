@@ -221,7 +221,11 @@ class ConnectionManager(QObject):
 
     async def shutdown(self) -> None:
         self._shutting_down = True
+        task = self._connect_task
         self._cancel_connect()
+        if task:
+            with suppress(BaseException):
+                await task
         if self._client:
             with suppress(Exception):
                 await self._client.disconnect()

@@ -64,6 +64,7 @@ class SettingsDialog(QDialog):
         layout.addWidget(close_btn)
 
         self._tv_list.currentRowChanged.connect(self._on_selection_changed)
+        self._tv_list.itemDoubleClicked.connect(self._on_double_click)
         self._refresh_list()
 
     def _refresh_list(self) -> None:
@@ -83,6 +84,9 @@ class SettingsDialog(QDialog):
     def _selected_tv_id(self) -> str | None:
         item = self._tv_list.currentItem()
         return item.data(Qt.ItemDataRole.UserRole) if item else None
+
+    def _on_double_click(self, item: QListWidgetItem) -> None:
+        self._on_edit()
 
     def _on_add(self) -> None:
         wizard = SetupWizard(self)
@@ -112,6 +116,7 @@ class SettingsDialog(QDialog):
             tv.ssh_port = dlg.ssh_port
             tv.ssh_user = dlg.ssh_user
             tv.ssh_key_path = dlg.ssh_key_path
+            tv.screenshot_interval = dlg.screenshot_interval
             self._config.update_tv(tv)
             self._refresh_list()
             self.tv_updated.emit(tv)

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from PySide6.QtWidgets import (
     QCheckBox,
+    QComboBox,
     QDialog,
     QFileDialog,
     QGroupBox,
@@ -16,6 +17,14 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+_SCREENSHOT_INTERVALS = [
+    (0, "Disabled"),
+    (5, "5 seconds"),
+    (10, "10 seconds"),
+    (30, "30 seconds"),
+    (60, "1 minute"),
+]
 
 from lgtv_remote.config import TvConfig
 from lgtv_remote.network import normalize_mac
@@ -34,6 +43,7 @@ class EditTvDialog(QDialog):
         self.ssh_port = tv.ssh_port
         self.ssh_user = tv.ssh_user
         self.ssh_key_path = tv.ssh_key_path
+        self.screenshot_interval = tv.screenshot_interval
 
         layout = QVBoxLayout(self)
         layout.setSpacing(8)
@@ -93,6 +103,20 @@ class EditTvDialog(QDialog):
         user_port_row.addWidget(self._ssh_port_spin)
         ssh_layout.addLayout(user_port_row)
 
+        self._interval_row = QWidget()
+        interval_layout = QHBoxLayout(self._interval_row)
+        interval_layout.setContentsMargins(0, 0, 0, 0)
+        interval_layout.addWidget(QLabel("Auto-refresh:"))
+        self._interval_combo = QComboBox()
+        selected_index = 0
+        for i, (seconds, label) in enumerate(_SCREENSHOT_INTERVALS):
+            self._interval_combo.addItem(label, seconds)
+            if seconds == tv.screenshot_interval:
+                selected_index = i
+        self._interval_combo.setCurrentIndex(selected_index)
+        interval_layout.addWidget(self._interval_combo)
+        ssh_layout.addWidget(self._interval_row)
+
         info = QLabel(
             "Requires Developer Mode on the TV with SSH enabled or root access. "
             "If the key has a passphrase, load it in ssh-agent first."
@@ -100,6 +124,9 @@ class EditTvDialog(QDialog):
         info.setWordWrap(True)
         info.setStyleSheet("color: #5a7a72; font-size: 8pt;")
         ssh_layout.addWidget(info)
+
+        self._ssh_check.toggled.connect(self._on_ssh_toggled)
+        self._on_ssh_toggled(tv.ssh_enabled)
 
         layout.addWidget(ssh_group)
 
@@ -111,6 +138,9 @@ class EditTvDialog(QDialog):
         save_btn.clicked.connect(self._on_save)
         btn_row.addWidget(save_btn)
         layout.addLayout(btn_row)
+
+    def _on_ssh_toggled(self, checked: bool) -> None:
+        self._interval_row.setVisible(checked)
 
     def _browse_key(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -154,5 +184,7 @@ class EditTvDialog(QDialog):
         self.ssh_host = host_text or None
 
         self.ssh_port = self._ssh_port_spin.value()
+
+        self.screenshot_interval = self._interval_combo.currentData()
 
         self.accept()

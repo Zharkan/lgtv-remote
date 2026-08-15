@@ -42,6 +42,8 @@ class ScreenshotService(QObject):
         self._capturing = False
         self._active = False
         self._had_screenshot = False
+        self._interval: int = 0
+        self._interval_task: asyncio.Task[None] | None = None
 
         xdg = os.environ.get(
             "XDG_CACHE_HOME", str(Path.home() / ".cache")
@@ -53,16 +55,45 @@ class ScreenshotService(QObject):
         self._active = active
         if active:
             self.capture_once()
-        elif self._had_screenshot:
-            self._had_screenshot = False
-            self.screenshot_cleared.emit()
+            self._start_interval_loop()
+        else:
+            self._stop_interval_loop()
+            if self._had_screenshot:
+                self._had_screenshot = False
+                self.screenshot_cleared.emit()
 
     def capture_once(self, delay: float = 0) -> None:
         if self._active:
             asyncio.ensure_future(self._capture(delay))
 
+    def set_interval(self, seconds: int) -> None:
+        self._interval = seconds
+        if self._active:
+            self._stop_interval_loop()
+            self._start_interval_loop()
+
     def stop(self) -> None:
         self._active = False
+        self._stop_interval_loop()
+
+    def _start_interval_loop(self) -> None:
+        self._stop_interval_loop()
+        if self._interval > 0:
+            self._interval_task = asyncio.ensure_future(self._interval_loop())
+
+    def _stop_interval_loop(self) -> None:
+        if self._interval_task is not None:
+            self._interval_task.cancel()
+            self._interval_task = None
+
+    async def _interval_loop(self) -> None:
+        try:
+            while self._active and self._interval > 0:
+                await asyncio.sleep(self._interval)
+                if self._active and self._interval > 0:
+                    await self._capture()
+        except asyncio.CancelledError:
+            pass
 
     async def _capture(self, delay: float = 0) -> None:
         if delay > 0:

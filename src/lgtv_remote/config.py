@@ -22,6 +22,7 @@ class TvConfig:
     ssh_port: int | None = None
     ssh_user: str | None = None
     ssh_key_path: str | None = None
+    screenshot_interval: int = 0
 
     @staticmethod
     def new(label: str, host: str, mac: str | None = None) -> TvConfig:

@@ -5,7 +5,6 @@ import os
 os.environ["QT_API"] = "pyside6"
 
 import argparse
-import asyncio
 import logging
 import sys
 
@@ -41,15 +40,12 @@ def main() -> None:
 
     loop = QEventLoop(app)
     with loop:
-        loop.run_until_complete(_run(app, conn_manager))
+        loop.run_until_complete(_run(conn_manager, window))
 
 
-async def _run(app: QApplication, conn_manager: ConnectionManager) -> None:
-    stop_event = asyncio.Event()
-    app.aboutToQuit.connect(stop_event.set)
+async def _run(conn_manager: ConnectionManager, window: MainWindow) -> None:
     conn_manager.start()
-    await stop_event.wait()
-    await conn_manager.shutdown()
+    await window.wait_closed()
 
 
 if __name__ == "__main__":

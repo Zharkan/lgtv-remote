@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QCloseEvent, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
@@ -14,7 +15,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from qasync import asyncClose, asyncSlot
+from qasync import asyncSlot
 
 from lgtv_remote.config import ConfigStore, TvConfig
 from lgtv_remote.connection import ConnectionManager, ConnectionState
@@ -46,6 +47,8 @@ class MainWindow(QMainWindow):
         self._conn = conn
         self._config = config
         self._icon_cache = IconCache(self)
+        self._closed_event = asyncio.Event()
+        self._closing = False
         self._pin_dialog: PinDialog | None = None
         self._pending_pin_keys: list[str] = []
         self._pin_key_index: int = 0
@@ -115,6 +118,7 @@ class MainWindow(QMainWindow):
         self._input_grid.app_clicked.connect(self._on_launch_app)
 
         self._screenshot_svc = ScreenshotService(conn, config, self)
+        self._sync_screenshot_interval()
         self._screenshot_svc.screenshot_ready.connect(
             self._now_playing.set_screenshot
         )
@@ -302,6 +306,7 @@ class MainWindow(QMainWindow):
     @asyncSlot(str)
     async def _on_tv_switch(self, tv_id: str) -> None:
         self._conn.switch_tv(tv_id)
+        self._sync_screenshot_interval()
 
     @asyncSlot(int)
     async def _on_volume(self, value: int) -> None:
@@ -355,8 +360,13 @@ class MainWindow(QMainWindow):
         dlg = SettingsDialog(self._config, self)
         dlg.tv_added.connect(self._on_tv_added)
         dlg.tv_removed.connect(self._on_tv_removed)
+        dlg.tv_updated.connect(lambda _: self._sync_screenshot_interval())
         dlg.exec()
         self._header.refresh_tv_list()
+
+    def _sync_screenshot_interval(self) -> None:
+        tv = self._config.active_tv
+        self._screenshot_svc.set_interval(tv.screenshot_interval if tv else 0)
 
     def _on_tv_added(self, tv: TvConfig) -> None:
         self._conn.switch_tv(tv.id)
@@ -377,7 +387,18 @@ class MainWindow(QMainWindow):
         self._header.refresh_tv_list()
         self._conn.switch_tv(tv.id)
 
-    @asyncClose
-    async def closeEvent(self, event: QCloseEvent) -> None:
+    async def wait_closed(self) -> None:
+        await self._closed_event.wait()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self._closing:
+            return
+        self._closing = True
+        event.ignore()
+        self.hide()
         self._screenshot_svc.stop()
+        asyncio.ensure_future(self._async_close())
+
+    async def _async_close(self) -> None:
         await self._conn.shutdown()
+        self._closed_event.set()
