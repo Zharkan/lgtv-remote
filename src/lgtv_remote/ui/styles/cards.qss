@@ -1,0 +1,74 @@
+/* Cards — now-playing, inputs, app cards */
+
+/* ── Now Playing ── */
+#nowPlayingFrame {
+    border: 1px solid @border;
+    border-radius: 12px;
+    background-color: @bg_card;
+}
+#nowPlayingSub {
+    color: @accent;
+}
+#nowPlayingPort {
+    color: @text_muted;
+}
+
+/* ── Section Headers ── */
+#sectionHeader {
+    color: @text_muted;
+    padding-top: 8px;
+    padding-bottom: 2px;
+}
+
+/* ── Input Buttons ── */
+#inputPortLabel { color: @text_muted; font-size: 8pt; }
+#inputNameLabel { color: @text; font-size: 9pt; font-weight: bold; }
+QPushButton#inputButton {
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 4px;
+    background-color: @bg_card;
+}
+QPushButton#inputButton:hover {
+    border-color: @accent;
+    background-color: @bg_hover;
+}
+QPushButton#inputButton[active="true"] {
+    border: 2px solid @accent;
+    background-color: @bg_active;
+}
+
+/* ── App Card Buttons ── */
+QPushButton#appCardButton {
+    border: 1px solid @border;
+    border-radius: 8px;
+    background-color: @bg_card;
+}
+QPushButton#appCardButton:hover {
+    border-color: @accent;
+    background-color: @bg_hover;
+}
+QPushButton#appCardButton[active="true"] {
+    border: 2px solid @accent;
+    background-color: @bg_active;
+}
+#appIconLabel {
+    background-color: @bg_active;
+    border-radius: 8px;
+}
+#appNameLabel {
+    color: @text;
+    font-size: 8pt;
+}
+
+/* ── See All Button ── */
+QPushButton#seeAllButton {
+    border: none;
+    background: transparent;
+    color: @accent;
+    font-size: 9pt;
+    padding: 0 4px;
+}
+QPushButton#seeAllButton:hover {
+    color: @accent_hover;
+}

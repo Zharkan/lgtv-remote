@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=LG TV Remote
+Comment=Control LG webOS TVs over your local network
+Exec=lgtv-remote
+Icon=lgtv-remote
+Type=Application
+Categories=Utility;RemoteAccess;
+Keywords=TV;LG;webOS;remote;HDMI;
+StartupNotify=true

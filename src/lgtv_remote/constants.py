@@ -1,0 +1,39 @@
+from __future__ import annotations
+
+# -- webOS protocol --
+WEBOS_PORT = 3000
+PROBE_TIMEOUT_SECS = 2.0
+POLL_INTERVAL_SECS = 2
+DISCONNECT_THRESHOLD = 2
+
+# -- SSDP / discovery --
+MSEARCH_REPEAT_COUNT = 3
+MSEARCH_SEND_DELAY_SECS = 1
+SSDP_RECV_DEADLINE_SECS = 2.0
+SSDP_RECV_TIMEOUT_SECS = 0.5
+ARP_SETTLE_DELAY_SECS = 0.2
+
+# -- network (ioctl + WoL) --
+SIOCGIFADDR = 0x8915
+SIOCGIFNETMASK = 0x891B
+SOCKADDR_IP_OFFSET = slice(20, 24)
+WOL_PORTS = (9, 7)
+
+# -- screenshot --
+SCREENSHOT_WIDTH = 960
+SCREENSHOT_HEIGHT = 540
+
+# -- config --
+CONFIG_FILE_MODE = 0o600
+
+# -- mock --
+MOCK_CONNECT_DELAY_SECS = 0.3
+MOCK_CLIENT_KEY = "mock-client-key-12345"
+
+# -- UI shared --
+HDMI_APP_PREFIX = "com.webos.app.hdmi"
+
+# -- UI timing --
+PIN_INITIAL_DELAY_MS = 1500
+PIN_KEY_INTERVAL_MS = 200
+SETUP_WIZARD_DELAY_MS = 200

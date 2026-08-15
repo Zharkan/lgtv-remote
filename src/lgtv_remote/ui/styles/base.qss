@@ -1,0 +1,59 @@
+/* Base — colors, typography, scrollbars, combobox */
+
+QWidget {
+    font-family: sans-serif;
+    color: @text;
+}
+QMainWindow {
+    background-color: @bg;
+}
+QScrollArea, QScrollArea > QWidget > QWidget {
+    background-color: @bg;
+    border: none;
+}
+
+/* ── Scrollbars ── */
+QScrollBar:vertical {
+    background-color: @bg;
+    width: 8px;
+    border: none;
+}
+QScrollBar::handle:vertical {
+    background-color: @border;
+    border-radius: 4px;
+    min-height: 30px;
+}
+QScrollBar::handle:vertical:hover { background-color: @border_hover; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }
+
+QScrollBar:horizontal {
+    background-color: transparent;
+    height: 6px;
+    border: none;
+}
+QScrollBar::handle:horizontal {
+    background-color: @border;
+    border-radius: 3px;
+    min-width: 30px;
+}
+QScrollBar::handle:horizontal:hover { background-color: @border_hover; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal { background: none; }
+
+/* ── Combobox ── */
+QComboBox {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 4px;
+    color: @text;
+    padding: 4px 8px;
+}
+QComboBox::drop-down { border: none; }
+QComboBox QAbstractItemView {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    color: @text;
+    selection-background-color: @accent;
+    selection-color: @bg;
+}

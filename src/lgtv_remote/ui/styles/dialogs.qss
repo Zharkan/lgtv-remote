@@ -1,0 +1,133 @@
+/* Dialogs — settings, edit TV, PIN, all-apps */
+
+QDialog {
+    background-color: @bg;
+    color: @text;
+    font-family: sans-serif;
+}
+QDialog QLabel {
+    color: @text;
+}
+QDialog QLineEdit, QDialog QSpinBox {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 6px;
+    color: @text;
+    padding: 6px 8px;
+    min-height: 20px;
+}
+QDialog QLineEdit:focus, QDialog QSpinBox:focus {
+    border-color: @accent;
+}
+QDialog QLineEdit::placeholder {
+    color: @text_dim;
+}
+QDialog QPushButton {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 6px;
+    color: @text;
+    padding: 6px 14px;
+    min-height: 20px;
+}
+QDialog QPushButton:hover {
+    background-color: @bg_hover;
+    border-color: @border_hover;
+}
+QDialog QPushButton:pressed {
+    background-color: @accent;
+    color: @bg;
+}
+QListWidget {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 6px;
+    color: @text;
+    padding: 4px;
+}
+QListWidget::item {
+    padding: 6px 8px;
+    border-radius: 4px;
+}
+QListWidget::item:selected {
+    background-color: @bg_active;
+    color: @text;
+}
+QListWidget::item:hover {
+    background-color: @bg_hover;
+}
+QCheckBox {
+    color: @text;
+    spacing: 8px;
+}
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 1px solid @border;
+    border-radius: 4px;
+    background-color: @bg_card;
+}
+QCheckBox::indicator:checked {
+    background-color: @accent;
+    border-color: @accent;
+}
+QGroupBox {
+    border: 1px solid @border;
+    border-radius: 8px;
+    margin-top: 14px;
+    padding: 16px 12px 12px 12px;
+    color: @text_muted;
+    font-weight: bold;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 6px;
+    color: @text_muted;
+}
+QMessageBox {
+    background-color: @bg;
+}
+QMessageBox QLabel {
+    color: @text;
+}
+
+/* ── PIN Dialog ── */
+#pinDialog QLineEdit {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 8px;
+    color: @text;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px;
+    letter-spacing: 12px;
+    min-height: 36px;
+}
+#pinDialog QLineEdit:focus { border-color: @accent; }
+QPushButton#pinOkButton {
+    background-color: @accent;
+    border: none;
+    color: @bg;
+    font-weight: bold;
+}
+QPushButton#pinOkButton:hover { background-color: @accent_hover; }
+QPushButton#pinOkButton:disabled {
+    background-color: @border;
+    color: @text_dim;
+}
+
+/* ── Progress Bar ── */
+QProgressBar {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 7px;
+    min-height: 14px;
+    max-height: 14px;
+    text-align: center;
+    color: transparent;
+}
+QProgressBar::chunk {
+    background-color: @accent;
+    border-radius: 6px;
+}

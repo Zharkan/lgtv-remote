@@ -1,0 +1,210 @@
+/* Controls — power, settings, volume, dpad, numpad, nav, media */
+
+/* ── Power / Settings ── */
+QPushButton#powerButton {
+    border: 2px solid @danger;
+    border-radius: 18px;
+    color: @danger;
+    background: transparent;
+}
+QPushButton#powerButton:hover {
+    background-color: @danger;
+    color: white;
+}
+QPushButton#settingsButton {
+    border: 1px solid @border;
+    border-radius: 18px;
+    color: @text_muted;
+    background: transparent;
+}
+QPushButton#settingsButton:hover {
+    background-color: @bg_hover;
+}
+
+/* ── Volume Card ── */
+#volumeCard {
+    border: 1px solid @border;
+    border-radius: 12px;
+    background-color: @bg_card;
+}
+#volumeLabel {
+    color: @text_muted;
+    font-weight: bold;
+}
+QPushButton#volButton {
+    border: 1px solid @border;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: @text;
+    background-color: @bg_active;
+}
+QPushButton#volButton:hover {
+    background-color: @bg_hover_light;
+    border-color: @border_hover;
+}
+QPushButton#muteButton {
+    border: 1px solid @border;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: @bg_active;
+}
+QPushButton#muteButton:hover {
+    background-color: @bg_hover_light;
+}
+QPushButton#muteButton:checked {
+    background-color: @danger;
+    color: white;
+    border-color: @danger;
+}
+
+QSlider::groove:horizontal {
+    height: 8px;
+    border-radius: 4px;
+    background-color: @border;
+}
+QSlider::handle:horizontal {
+    width: 18px;
+    height: 18px;
+    margin: -5px 0;
+    border-radius: 9px;
+    background-color: @text;
+}
+QSlider::sub-page:horizontal {
+    height: 8px;
+    border-radius: 4px;
+    background-color: @accent;
+}
+
+/* ── Numpad ── */
+QPushButton#numButton {
+    border: 1px solid @border;
+    border-radius: 21px;
+    font-size: 14px;
+    font-weight: bold;
+    color: @text;
+    background-color: transparent;
+}
+QPushButton#numButton:hover {
+    background-color: @bg_hover;
+    border-color: @border_hover;
+}
+QPushButton#numButton:pressed {
+    background-color: @accent;
+    color: @bg;
+}
+
+/* ── Nav Row ── */
+QPushButton#navButton {
+    border: 1px solid @border;
+    border-radius: 20px;
+    color: @text;
+    background-color: @bg_card;
+    padding: 6px 16px;
+    font-size: 11px;
+}
+QPushButton#navButton:hover {
+    background-color: @bg_hover;
+    border-color: @border_hover;
+}
+QPushButton#homeButton {
+    border: 1px solid @accent;
+    border-radius: 20px;
+    color: @text;
+    background-color: @bg_card;
+    padding: 6px 16px;
+    font-size: 11px;
+}
+QPushButton#homeButton:hover {
+    background-color: @bg_active;
+    border-color: @accent_hover;
+}
+
+/* ── Media Card ── */
+#mediaCard {
+    background-color: @bg_card;
+    border: 1px solid @border;
+    border-radius: 12px;
+}
+QPushButton#mediaButton {
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    color: @text;
+    background-color: transparent;
+}
+QPushButton#mediaButton:hover {
+    background-color: @bg_active;
+}
+QPushButton#playButton {
+    border: none;
+    border-radius: 26px;
+    font-size: 18px;
+    background-color: @accent;
+    color: @bg;
+}
+QPushButton#playButton:hover {
+    background-color: @accent_hover;
+}
+QPushButton#playButton:pressed {
+    background-color: @accent_pressed;
+}
+
+/* ── Offline Page ── */
+#offlineIcon {
+    color: @border;
+    font-size: 64px;
+}
+#offlineTitle {
+    color: @text_muted;
+    font-size: 16pt;
+    font-weight: bold;
+}
+#offlineSubtitle {
+    color: @text_dim;
+    font-size: 10pt;
+}
+QPushButton#offlinePowerButton {
+    background-color: @bg_card;
+    border: 2px solid @accent;
+    border-radius: 24px;
+    color: @accent;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 28px;
+}
+QPushButton#offlinePowerButton:hover {
+    background-color: @accent;
+    color: @bg;
+}
+QPushButton#offlinePowerButton:disabled {
+    border-color: @border;
+    color: @text_dim;
+}
+
+/* ── Unconfigured Page ── */
+#unconfiguredIcon {
+    font-size: 64px;
+}
+#unconfiguredTitle {
+    color: @text_muted;
+    font-size: 16pt;
+    font-weight: bold;
+}
+#unconfiguredSubtitle {
+    color: @text_dim;
+    font-size: 10pt;
+}
+QPushButton#unconfiguredSetupButton {
+    background-color: @accent;
+    border: 2px solid @accent;
+    border-radius: 24px;
+    color: @bg;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 28px;
+}
+QPushButton#unconfiguredSetupButton:hover {
+    background-color: @accent_hover;
+    border-color: @accent_hover;
+}

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lgtv-remote"
+version = "0.1.0"
+description = "Desktop remote control for LG webOS TVs"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    "PySide6>=6.5",
+    "aiohttp>=3.8",
+    "aiowebostv>=0.9",
+    "qasync>=0.27",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[project.scripts]
+lgtv-remote = "lgtv_remote.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lgtv_remote"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
