@@ -33,6 +33,10 @@ QPushButton#inputButton:hover {
     border-color: @accent;
     background-color: @bg_hover;
 }
+QPushButton#inputButton:pressed {
+    background-color: @accent_pressed;
+    border-color: @accent;
+}
 QPushButton#inputButton[active="true"] {
     border: 2px solid @accent;
     background-color: @bg_active;
@@ -47,6 +51,10 @@ QPushButton#appCardButton {
 QPushButton#appCardButton:hover {
     border-color: @accent;
     background-color: @bg_hover;
+}
+QPushButton#appCardButton:pressed {
+    background-color: @accent_pressed;
+    border-color: @accent;
 }
 QPushButton#appCardButton[active="true"] {
     border: 2px solid @accent;

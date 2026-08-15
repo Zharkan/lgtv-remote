@@ -35,6 +35,10 @@ class AppConfig:
     active_tv_id: str | None = None
     tvs: list[TvConfig] = field(default_factory=list)
     connect_on_launch: bool = True
+    window_x: int | None = None
+    window_y: int | None = None
+    window_width: int | None = None
+    window_height: int | None = None
 
 
 class ConfigStore:
@@ -114,6 +118,10 @@ class ConfigStore:
                 active_tv_id=config_data.get("active_tv_id"),
                 tvs=tvs,
                 connect_on_launch=config_data.get("connect_on_launch", True),
+                window_x=config_data.get("window_x"),
+                window_y=config_data.get("window_y"),
+                window_width=config_data.get("window_width"),
+                window_height=config_data.get("window_height"),
             )
         except (json.JSONDecodeError, TypeError, KeyError):
             return AppConfig()

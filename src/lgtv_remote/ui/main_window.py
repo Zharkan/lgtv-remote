@@ -3,12 +3,14 @@ from __future__ import annotations
 import asyncio
 
 from PySide6.QtCore import QTimer, Qt
-from PySide6.QtGui import QCloseEvent, QKeySequence, QShortcut
+from PySide6.QtGui import QCloseEvent, QKeySequence, QMoveEvent, QResizeEvent, QShortcut
 from PySide6.QtWidgets import (
+    QApplication,
     QFrame,
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QProgressBar,
     QPushButton,
     QScrollArea,
     QStackedWidget,
@@ -127,6 +129,11 @@ class MainWindow(QMainWindow):
         )
 
         self._setup_shortcuts()
+        self._restore_geometry()
+        self._save_timer = QTimer(self)
+        self._save_timer.setSingleShot(True)
+        self._save_timer.setInterval(500)
+        self._save_timer.timeout.connect(self._save_geometry)
 
         if not config.config.tvs:
             QTimer.singleShot(SETUP_WIZARD_DELAY_MS, self._show_setup_wizard)
@@ -200,6 +207,15 @@ class MainWindow(QMainWindow):
         self._offline_subtitle.setWordWrap(True)
         lay.addWidget(self._offline_subtitle)
 
+        lay.addSpacing(16)
+
+        self._offline_progress = QProgressBar()
+        self._offline_progress.setObjectName("offlineProgress")
+        self._offline_progress.setRange(0, 0)
+        self._offline_progress.setFixedWidth(200)
+        self._offline_progress.hide()
+        lay.addWidget(self._offline_progress, alignment=Qt.AlignmentFlag.AlignCenter)
+
         lay.addSpacing(20)
 
         self._offline_power_btn = QPushButton("⏻  Wake Up")
@@ -263,8 +279,10 @@ class MainWindow(QMainWindow):
         self._screenshot_svc.set_active(connected)
 
         if connected:
+            self._offline_progress.hide()
             self._body_stack.setCurrentIndex(0)
         elif state == ConnectionState.UNCONFIGURED:
+            self._offline_progress.hide()
             self._body_stack.setCurrentIndex(2)
         else:
             title, subtitle = self._OFFLINE_MESSAGES.get(
@@ -279,6 +297,10 @@ class MainWindow(QMainWindow):
             self._offline_power_btn.setText(
                 "Connecting…" if is_waiting else "⏻  Wake Up"
             )
+            if is_waiting:
+                self._offline_progress.show()
+            else:
+                self._offline_progress.hide()
             self._body_stack.setCurrentIndex(1)
 
     def _on_pairing_required(self) -> None:
@@ -292,6 +314,7 @@ class MainWindow(QMainWindow):
             self._offline_subtitle.setText("Waiting for TV to shut down")
             self._offline_power_btn.setEnabled(False)
             self._offline_power_btn.setText("⏻")
+            self._offline_progress.show()
             self._body_stack.setCurrentIndex(1)
             await self._conn.power_off()
         else:
@@ -301,6 +324,7 @@ class MainWindow(QMainWindow):
             )
             self._offline_power_btn.setEnabled(False)
             self._offline_power_btn.setText("Connecting…")
+            self._offline_progress.show()
             await self._conn.power_on()
 
     @asyncSlot(str)
@@ -387,6 +411,37 @@ class MainWindow(QMainWindow):
         self._header.refresh_tv_list()
         self._conn.switch_tv(tv.id)
 
+    def _restore_geometry(self) -> None:
+        cfg = self._config.config
+        if all(v is not None for v in (cfg.window_x, cfg.window_y, cfg.window_width, cfg.window_height)):
+            rect = self.geometry()
+            rect.setX(cfg.window_x)
+            rect.setY(cfg.window_y)
+            rect.setWidth(cfg.window_width)
+            rect.setHeight(cfg.window_height)
+            screen = QApplication.screenAt(rect.center())
+            if screen and screen.availableGeometry().contains(rect.center()):
+                self.setGeometry(rect)
+
+    def _save_geometry(self) -> None:
+        if self.isMinimized() or self.isMaximized():
+            return
+        geo = self.geometry()
+        cfg = self._config.config
+        cfg.window_x = geo.x()
+        cfg.window_y = geo.y()
+        cfg.window_width = geo.width()
+        cfg.window_height = geo.height()
+        self._config.save()
+
+    def moveEvent(self, event: QMoveEvent) -> None:
+        super().moveEvent(event)
+        self._save_timer.start()
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
+        self._save_timer.start()
+
     async def wait_closed(self) -> None:
         await self._closed_event.wait()
 
@@ -394,6 +449,7 @@ class MainWindow(QMainWindow):
         if self._closing:
             return
         self._closing = True
+        self._save_geometry()
         event.ignore()
         self.hide()
         self._screenshot_svc.stop()
