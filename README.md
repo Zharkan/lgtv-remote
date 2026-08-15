@@ -10,36 +10,21 @@ using the SSAP WebSocket protocol, with Wake-on-LAN for power-on.
 - Settings → General → Devices → TV Management → Mobile TV On
 - The exact path varies by firmware version.
 
-## Install (from source)
+## Install
 
-### Option A: System PySide6 (recommended on Arch)
+### Arch Linux (AUR)
 
 ```bash
-# Install system dependencies
-sudo pacman -S pyside6 python-qasync
+yay -S lgtv-remote
+```
 
-# Create venv with access to system packages
+### From source
+
+```bash
+sudo pacman -S pyside6 python-qasync
 python -m venv --system-site-packages .venv
 source .venv/bin/activate
-
-# Install remaining deps + the app
 pip install -e .
-```
-
-### Option B: Fully isolated venv
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-```
-
-This pulls PySide6 from PyPI (large download, ~200 MB).
-
-### Arch package
-
-```bash
-makepkg -si
 ```
 
 ## Usage
