@@ -19,7 +19,10 @@ Architecture: all
 Depends:
  ${python3:Depends},
  ${misc:Depends},
- python3-pyside6,
+ python3-pyside6.qtcore,
+ python3-pyside6.qtgui,
+ python3-pyside6.qtsvg,
+ python3-pyside6.qtwidgets,
  python3-aiohttp,
  python3-aiowebostv,
  python3-qasync,
