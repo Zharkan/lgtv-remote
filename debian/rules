@@ -5,6 +5,11 @@
 
 override_dh_auto_install:
 	python3 -m installer --destdir=debian/lgtv-remote --prefix=/usr dist/*.whl
+	if [ -d debian/lgtv-remote/usr/local/bin ]; then \
+		mkdir -p debian/lgtv-remote/usr/bin; \
+		mv debian/lgtv-remote/usr/local/bin/* debian/lgtv-remote/usr/bin/; \
+		rm -rf debian/lgtv-remote/usr/local; \
+	fi
 	install -Dm644 lgtv-remote.desktop \
 		debian/lgtv-remote/usr/share/applications/lgtv-remote.desktop
 	install -Dm644 icons/lgtv-remote.svg \
