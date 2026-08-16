@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --buildsystem=pybuild
+
+override_dh_auto_install:
+	python3 -m installer --destdir=debian/lgtv-remote dist/*.whl
+	install -Dm644 lgtv-remote.desktop \
+		debian/lgtv-remote/usr/share/applications/lgtv-remote.desktop
+	install -Dm644 icons/lgtv-remote.svg \
+		debian/lgtv-remote/usr/share/icons/hicolor/scalable/apps/lgtv-remote.svg
+
+override_dh_auto_build:
+	python3 -m build --wheel --no-isolation

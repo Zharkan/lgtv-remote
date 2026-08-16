@@ -1,0 +1,29 @@
+Source: lgtv-remote
+Section: utils
+Priority: optional
+Maintainer: Zharkan <g.j@mailbox.org>
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-python,
+ python3-all,
+ python3-setuptools,
+ python3-hatchling,
+ python3-build,
+ python3-installer,
+Standards-Version: 4.7.0
+Homepage: https://github.com/Zharkan/lgtv-remote
+Rules-Requires-Root: no
+
+Package: lgtv-remote
+Architecture: all
+Depends:
+ ${python3:Depends},
+ ${misc:Depends},
+ python3-pyside6,
+ python3-aiohttp,
+ python3-aiowebostv,
+ python3-qasync,
+Description: Desktop remote control for LG webOS TVs
+ A PySide6-based desktop application to control LG webOS TVs
+ over the local network. Supports power management, input switching,
+ volume control, and TV screenshots.
