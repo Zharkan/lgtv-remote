@@ -4,7 +4,7 @@
 	dh $@ --buildsystem=pybuild
 
 override_dh_auto_install:
-	python3 -m installer --destdir=debian/lgtv-remote dist/*.whl
+	python3 -m installer --destdir=debian/lgtv-remote --prefix=/usr dist/*.whl
 	install -Dm644 lgtv-remote.desktop \
 		debian/lgtv-remote/usr/share/applications/lgtv-remote.desktop
 	install -Dm644 icons/lgtv-remote.svg \
