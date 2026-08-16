@@ -34,7 +34,7 @@ class AppConfig:
     schema_version: int = 2
     active_tv_id: str | None = None
     tvs: list[TvConfig] = field(default_factory=list)
-    connect_on_launch: bool = True
+    minimize_to_tray: bool = False
     window_x: int | None = None
     window_y: int | None = None
     window_width: int | None = None
@@ -117,7 +117,7 @@ class ConfigStore:
                 schema_version=config_data.get("schema_version", 1),
                 active_tv_id=config_data.get("active_tv_id"),
                 tvs=tvs,
-                connect_on_launch=config_data.get("connect_on_launch", True),
+                minimize_to_tray=config_data.get("minimize_to_tray", False),
                 window_x=config_data.get("window_x"),
                 window_y=config_data.get("window_y"),
                 window_width=config_data.get("window_width"),

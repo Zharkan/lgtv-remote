@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lgtv-remote"
-version = "0.2.0"
+version = "0.4.0"
 description = "Desktop remote control for LG webOS TVs"
 requires-python = ">=3.12"
 license = "MIT"

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from PySide6.QtCore import QTimer, Qt
+from PySide6.QtCore import QTimer, Qt, Signal
 from PySide6.QtGui import QCloseEvent, QKeySequence, QMoveEvent, QResizeEvent, QShortcut
 from PySide6.QtWidgets import (
     QApplication,
@@ -36,6 +36,8 @@ from lgtv_remote.ui.volume_row import VolumeRowWidget
 
 
 class MainWindow(QMainWindow):
+    tray_toggled = Signal(bool)
+
     def __init__(
         self,
         conn: ConnectionManager,
@@ -385,6 +387,7 @@ class MainWindow(QMainWindow):
         dlg.tv_added.connect(self._on_tv_added)
         dlg.tv_removed.connect(self._on_tv_removed)
         dlg.tv_updated.connect(lambda _: self._sync_screenshot_interval())
+        dlg.tray_toggled.connect(self.tray_toggled)
         dlg.exec()
         self._header.refresh_tv_list()
 
@@ -445,15 +448,26 @@ class MainWindow(QMainWindow):
     async def wait_closed(self) -> None:
         await self._closed_event.wait()
 
-    def closeEvent(self, event: QCloseEvent) -> None:
+    def request_quit(self) -> None:
         if self._closing:
             return
         self._closing = True
         self._save_geometry()
-        event.ignore()
         self.hide()
         self._screenshot_svc.stop()
         asyncio.ensure_future(self._async_close())
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self._closing:
+            event.accept()
+            return
+        if self._config.config.minimize_to_tray:
+            event.ignore()
+            self._save_geometry()
+            self.hide()
+        else:
+            event.ignore()
+            self.request_quit()
 
     async def _async_close(self) -> None:
         await self._conn.shutdown()

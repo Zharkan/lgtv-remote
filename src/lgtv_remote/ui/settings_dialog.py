@@ -23,6 +23,7 @@ class SettingsDialog(QDialog):
     tv_added = Signal(object)
     tv_removed = Signal(str)
     tv_updated = Signal(object)
+    tray_toggled = Signal(bool)
 
     def __init__(self, config: ConfigStore, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -54,10 +55,10 @@ class SettingsDialog(QDialog):
         btn_row.addWidget(self._forget_btn)
         layout.addLayout(btn_row)
 
-        self._connect_on_launch = QCheckBox("Connect on launch")
-        self._connect_on_launch.setChecked(config.config.connect_on_launch)
-        self._connect_on_launch.toggled.connect(self._on_connect_toggle)
-        layout.addWidget(self._connect_on_launch)
+        self._minimize_to_tray = QCheckBox("Minimize to tray")
+        self._minimize_to_tray.setChecked(config.config.minimize_to_tray)
+        self._minimize_to_tray.toggled.connect(self._on_tray_toggle)
+        layout.addWidget(self._minimize_to_tray)
 
         close_btn = QPushButton("Close")
         close_btn.clicked.connect(self.accept)
@@ -143,6 +144,7 @@ class SettingsDialog(QDialog):
             self._config.update_tv(tv)
             self._refresh_list()
 
-    def _on_connect_toggle(self, checked: bool) -> None:
-        self._config.config.connect_on_launch = checked
+    def _on_tray_toggle(self, checked: bool) -> None:
+        self._config.config.minimize_to_tray = checked
         self._config.save()
+        self.tray_toggled.emit(checked)

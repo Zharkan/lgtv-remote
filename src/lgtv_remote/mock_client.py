@@ -121,6 +121,79 @@ MOCK_INPUTS: dict[str, dict[str, Any]] = {
     },
 }
 
+MOCK_TV_PRESETS: dict[str, dict[str, Any]] = {
+    "10.0.0.1": {
+        "label": "Living Room",
+        "model": "OLED55C3PSA",
+        "volume": 15,
+        "muted": False,
+        "current_app": "com.webos.app.hdmi1",
+        "inputs": MOCK_INPUTS,
+        "apps": MOCK_APPS,
+    },
+    "10.0.0.2": {
+        "label": "Bedroom",
+        "model": "OLED42C2PSA",
+        "volume": 8,
+        "muted": True,
+        "current_app": "netflix",
+        "inputs": {
+            "com.webos.app.hdmi1": {
+                "id": "HDMI_1",
+                "appId": "com.webos.app.hdmi1",
+                "label": "Chromecast",
+                "spdProductDescription": "Chromecast",
+                "spdSourceDeviceInfo": "STB",
+                "connected": True,
+                "subList": [{"brandName": "Google", "labelName": "Chromecast"}],
+            },
+            "com.webos.app.hdmi2": {
+                "id": "HDMI_2",
+                "appId": "com.webos.app.hdmi2",
+                "label": "HDMI 2",
+                "connected": False,
+            },
+        },
+        "apps": {
+            k: v
+            for k, v in MOCK_APPS.items()
+            if k in ("netflix", "youtube.leanback.v4", "com.webos.app.spotify")
+        },
+    },
+    "10.0.0.3": {
+        "label": "Office",
+        "model": "27SR50F",
+        "volume": 30,
+        "muted": False,
+        "current_app": "com.webos.app.hdmi1",
+        "inputs": {
+            "com.webos.app.hdmi1": {
+                "id": "HDMI_1",
+                "appId": "com.webos.app.hdmi1",
+                "label": "Desktop PC",
+                "spdProductDescription": "PC",
+                "spdSourceDeviceInfo": "PC",
+                "connected": True,
+                "subList": [{"brandName": "PC", "labelName": "Desktop"}],
+            },
+            "com.webos.app.hdmi2": {
+                "id": "HDMI_2",
+                "appId": "com.webos.app.hdmi2",
+                "label": "Laptop",
+                "spdProductDescription": "Laptop",
+                "spdSourceDeviceInfo": "PC",
+                "connected": True,
+                "subList": [{"brandName": "Laptop", "labelName": "Laptop"}],
+            },
+        },
+        "apps": {
+            k: v
+            for k, v in MOCK_APPS.items()
+            if k in ("youtube.leanback.v4", "amazon")
+        },
+    },
+}
+
 
 class MockTvClient:
     def __init__(self, host: str, client_key: str | None = None, **kwargs: Any) -> None:
@@ -128,11 +201,24 @@ class MockTvClient:
         self.client_key = client_key or MOCK_CLIENT_KEY
         self._connected = False
         self._callbacks: list[Callable[[MockTvState], Awaitable[None]]] = []
-        self.tv_state = MockTvState(
-            apps=dict(MOCK_APPS),
-            inputs=dict(MOCK_INPUTS),
-        )
-        self.tv_info = MockTvInfo()
+        preset = MOCK_TV_PRESETS.get(host)
+        if preset:
+            self.tv_state = MockTvState(
+                volume=preset["volume"],
+                muted=preset["muted"],
+                current_app_id=preset["current_app"],
+                apps=dict(preset["apps"]),
+                inputs=dict(preset["inputs"]),
+            )
+            self.tv_info = MockTvInfo(
+                system={"modelName": preset["model"]},
+            )
+        else:
+            self.tv_state = MockTvState(
+                apps=dict(MOCK_APPS),
+                inputs=dict(MOCK_INPUTS),
+            )
+            self.tv_info = MockTvInfo()
 
     async def connect(self) -> bool:
         await asyncio.sleep(MOCK_CONNECT_DELAY_SECS)
