@@ -36,6 +36,17 @@ to keep the screenshot up to date.
 
 ## Install
 
+### Ubuntu 26.04+ / Debian (.deb)
+
+Download the `.deb` from the [latest release](https://github.com/Zharkan/lgtv-remote/releases/latest) and install it:
+
+```bash
+sudo apt install ./lgtv-remote_*.deb
+```
+
+All dependencies are available in the official repos starting with Ubuntu 26.04 LTS (Resolute).
+Earlier Ubuntu versions do not ship `python3-pyside6` and are not supported.
+
 ### Arch Linux (AUR)
 
 ```bash
