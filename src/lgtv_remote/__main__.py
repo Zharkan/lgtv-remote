@@ -6,10 +6,12 @@ os.environ["QT_API"] = "pyside6"
 
 import argparse
 import logging
+import socket
 import sys
 import tempfile
 from pathlib import Path
 
+from PySide6.QtCore import QSocketNotifier
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 from qasync import QEventLoop
 
@@ -18,6 +20,8 @@ from lgtv_remote.connection import ConnectionManager
 from lgtv_remote.ui.main_window import MainWindow
 from lgtv_remote.ui.style import load_stylesheet
 from lgtv_remote.ui.tray_icon import TrayIcon
+
+_SOCKET_PATH = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / "lgtv-remote.sock"
 
 
 def _inject_mock_tvs(config_store: ConfigStore) -> None:
@@ -39,6 +43,18 @@ def _inject_mock_tvs(config_store: ConfigStore) -> None:
     cfg.active_tv_id = cfg.tvs[0].id
 
 
+def _try_activate_existing() -> bool:
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        sock.connect(str(_SOCKET_PATH))
+        sock.sendall(b"show")
+        sock.close()
+        return True
+    except (ConnectionRefusedError, FileNotFoundError):
+        _SOCKET_PATH.unlink(missing_ok=True)
+        return False
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="LG webOS TV Remote")
     parser.add_argument("--mock", action="store_true", help="Use mock TV client")
@@ -54,6 +70,9 @@ def main() -> None:
     app.setApplicationName("lgtv-remote")
     app.setDesktopFileName("lgtv-remote")
     app.setStyleSheet(load_stylesheet())
+
+    if _try_activate_existing():
+        sys.exit(0)
 
     if args.mock:
         mock_dir = Path(tempfile.mkdtemp(prefix="lgtv-mock-"))
@@ -72,6 +91,26 @@ def main() -> None:
         window.tray_toggled.connect(tray.setVisible)
     else:
         config_store.config.minimize_to_tray = False
+
+    listen_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    _SOCKET_PATH.unlink(missing_ok=True)
+    listen_sock.bind(str(_SOCKET_PATH))
+    listen_sock.listen(1)
+    listen_sock.setblocking(False)
+
+    def _on_activate() -> None:
+        try:
+            conn, _ = listen_sock.accept()
+            conn.recv(64)
+            conn.close()
+        except OSError:
+            return
+        window.showNormal()
+        window.raise_()
+        window.activateWindow()
+
+    notifier = QSocketNotifier(listen_sock.fileno(), QSocketNotifier.Type.Read)
+    notifier.activated.connect(_on_activate)
 
     window.show()
 
